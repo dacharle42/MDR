@@ -1,0 +1,51 @@
+#model "PFvsNF";
+//save results as: 'rxy_z' (tab-delimited text) where x=p01NF y=p10NF z=p01NF/p01PF=p10NF/p10PF
+
+log2 = 0.69314718055995;
+
+// Rates
+
+p01NF = 4;	//NF promoter ON
+p10NF = 1;	//NF promoter OFF
+
+p01PF = p01NF/100.0;	//PF promoter ON
+p10PF = p10NF/100.0;	//PF promoter OFF
+kM = 1;
+gM = log2/5;
+kP1 = 10.0;
+gP1= log2/10;
+kP2 = 10.0;
+gP2 = log2/20;
+
+// Reagents
+APF = 0;
+IPF = 1;
+MPF = floor(p01PF*kM/gM/(p01PF+p10PF));
+P1PF = floor(p01PF*kM*kP1/gM/gP1/(p01PF+p10PF));
+P2PF = floor(p01PF*kM*kP2/gM/gP2/(p01PF+p10PF));
+
+ANF = 0;
+INF = 1;
+MNF = floor(p01NF*kM/gM/(p01NF+p10NF));
+P1NF = floor(p01NF*kM*kP1/gM/gP1/(p01NF+p10NF));
+P2NF = floor(p01NF*kM*kP2/gM/gP2/(p01NF+p10NF));
+
+// Reactions
+
+PromNF_ON,		INF -> ANF,	p01NF;
+PromNF_OFF,		ANF -> INF,	p10NF;
+TranscriptionNF,	ANF -> MNF + ANF,	kM;
+mRNAdecayNF,		MNF ->,	gM;
+Translation1NF,	MNF -> P1NF + MNF,	kP1;
+Proteindecay1NF,	P1NF ->,	gP1;
+Translation2NF,	MNF -> P2NF + MNF,	kP2;
+Proteindecay2NF,	P2NF ->,	gP2;
+
+PromPF_ON,		IPF -> APF,	p01PF;
+PromPF_OFF,		APF -> IPF,	p10PF;
+TranscriptionPF,	APF -> MPF + APF,	kM;
+mRNAdecayPF,		MPF ->,	gM;
+Translation1PF,		MPF -> P1PF + MPF,	kP1;
+Proteindecay1PF,	P1PF ->,	gP1;
+Translation2PF,		MPF -> P2PF + MPF,	kP2;
+Proteindecay2PF,	P2PF ->,	gP2;
